@@ -1,5 +1,7 @@
 import { x } from "tinyexec";
 
+import type { GitDiff } from "@/features/git/types";
+
 import { LOCKFILE_TUPLE } from "@/constants";
 
 export async function getStagedDiff({ cwd }: { cwd: string }) {
@@ -18,5 +20,5 @@ export async function getStagedDiff({ cwd }: { cwd: string }) {
     { nodeOptions: { cwd }, throwOnError: true },
   );
 
-  return result.stdout.trim();
+  return result.stdout.trim() as GitDiff;
 }
