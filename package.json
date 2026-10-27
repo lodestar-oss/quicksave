@@ -1,5 +1,5 @@
 {
-  "name": "quicksave",
+  "name": "@lodestar-oss/quicksave",
   "version": "0.1.0",
   "license": "MIT",
   "bin": {
