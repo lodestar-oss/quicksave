@@ -169,6 +169,9 @@ importers:
       '@ai-sdk/groq':
         specifier: 4.0.70
         version: 4.0.70(zod@4.6.7)
+      '@little-nebulae/zod-schemas':
+        specifier: 0.2.0
+        version: 0.2.0(type-fest@5.10.0)(zod@4.6.7)
       ai:
         specifier: 7.0.153
         version: 7.0.153(zod@4.6.7)
@@ -256,6 +259,12 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@little-nebulae/zod-schemas@0.2.0':
+    resolution: {integrity: sha512-QahrHRKjeShZPCXGAQuCms0fUWI1gWQUGTPbs5T+yeI8/ZllfxlX7Z20XhI3YXVnizza8L3FOwChMP74Z+43Vg==}
+    peerDependencies:
+      type-fest: ^5.0.0
+      zod: ^4.0.0
 
   '@loaderkit/resolve@1.0.6':
     resolution: {integrity: sha512-G8FdIoF5CypfwmD9rl8BXod5HDn8JqB0CCNBXDTaRZ+yRYhARrrSToX1zg1zy9jX3zLqigsELwhT4gNtkdQAUg==}
@@ -1498,6 +1507,11 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.6.0
+
+  '@little-nebulae/zod-schemas@0.2.0(type-fest@5.10.0)(zod@4.6.7)':
+    dependencies:
+      type-fest: 5.10.0
+      zod: 4.6.7
 
   '@loaderkit/resolve@1.0.6':
     dependencies:
