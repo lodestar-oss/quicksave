@@ -2,6 +2,10 @@
   "name": "quicksave",
   "version": "0.1.0",
   "license": "MIT",
+  "bin": {
+    "qs": "./dist/index.mjs",
+    "quicksave": "./dist/index.mjs"
+  },
   "files": [
     "dist"
   ],
