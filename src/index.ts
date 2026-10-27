@@ -4,7 +4,7 @@ import { parse, printErrors, printHelp, printVersion } from "@bomb.sh/router";
 import { cancel, confirm, isCancel, log, outro } from "@clack/prompts";
 
 import { app } from "@/app";
-import { commit } from "@/ops/commit";
+import { commitChanges } from "@/ops/commit-changes";
 import { generateCommitMessage } from "@/ops/generate-commit-message";
 import { getStagedDiff } from "@/ops/get-staged-diff";
 import { stageChanges } from "@/ops/stage-changes";
@@ -53,7 +53,7 @@ switch (result.method) {
         }
 
         if (shouldCommit) {
-          await commit({ message });
+          await commitChanges({ message });
           outro("Staged changes committed.");
         } else {
           outro("Nothing was committed.");
