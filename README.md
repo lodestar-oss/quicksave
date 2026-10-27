@@ -1,3 +1,3 @@
-# Little Nebula template
+# Quicksave CLI
 
-Little Nebulae's library template
+For people who's tired of comming up with commit messages.
