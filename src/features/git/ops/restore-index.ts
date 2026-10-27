@@ -1,15 +1,15 @@
 import { x } from "tinyexec";
 
-import type { TreeObjectId } from "@/features/git/types";
+import type { GitTreeId } from "@/features/git/types";
 
 export async function restoreIndex({
   cwd,
-  treeObjectId,
+  treeId,
 }: {
   cwd: string;
-  treeObjectId: TreeObjectId;
+  treeId: GitTreeId;
 }) {
-  await x("git", ["read-tree", treeObjectId], {
+  await x("git", ["read-tree", treeId], {
     nodeOptions: { cwd },
     throwOnError: true,
   });
