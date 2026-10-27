@@ -16,6 +16,7 @@
     "tag": "latest"
   },
   "scripts": {
+    "start": "oxnode ./src/index.ts",
     "build": "tsdown",
     "fmt": "oxfmt --disable-nested-config",
     "fmt:check": "oxfmt --check --disable-nested-config",

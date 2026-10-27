@@ -1,4 +1,4 @@
-import { log, outro } from "@clack/prompts";
+import { cancel, confirm, isCancel, log, outro } from "@clack/prompts";
 
 import { commit } from "@/ops/commit";
 import { generateCommitMessage } from "@/ops/generate-commit-message";
@@ -18,5 +18,18 @@ const message = await generateCommitMessage({ diff });
 log.success("Commit message generated:");
 log.message(message);
 
-await commit({ message });
-outro("Changes committed.");
+const shouldCommit = await confirm({
+  message: "Do you want to commit your staged changes with the above message?",
+});
+
+if (isCancel(shouldCommit)) {
+  cancel("Operation cancelled.");
+  process.exit(0);
+}
+
+if (shouldCommit) {
+  await commit({ message });
+  outro("Staged changes committed.");
+} else {
+  outro("Nothing was committed.");
+}
