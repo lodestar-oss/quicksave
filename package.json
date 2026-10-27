@@ -11,10 +11,6 @@
   ],
   "type": "module",
   "sideEffects": false,
-  "exports": {
-    ".": "./dist/index.js",
-    "./package.json": "./package.json"
-  },
   "publishConfig": {
     "access": "public",
     "tag": "latest"
