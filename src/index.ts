@@ -5,6 +5,9 @@ import { cancel, confirm, isCancel, log, outro } from "@clack/prompts";
 import { commit } from "@/ops/commit";
 import { generateCommitMessage } from "@/ops/generate-commit-message";
 import { getStagedDiff } from "@/ops/get-staged-diff";
+import { stageChanges } from "@/ops/stage-changes";
+
+await stageChanges();
 
 const diff = await getStagedDiff();
 
