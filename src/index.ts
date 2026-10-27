@@ -2,8 +2,10 @@
 
 import { parse, printErrors, printHelp, printVersion } from "@bomb.sh/router";
 import { cancel, confirm, isCancel, log, outro } from "@clack/prompts";
+import { ENV_FILE_NAME, loadDotEnvFile } from "@little-nebulae/node-env";
 
 import { app } from "@/app";
+import { cwd } from "@/config/cwd";
 import { commitChanges } from "@/ops/commit-changes";
 import { generateCommitMessage } from "@/ops/generate-commit-message";
 import { getStagedDiff } from "@/ops/get-staged-diff";
@@ -15,6 +17,15 @@ if (!result.ok) {
   log.error(printErrors(result));
   process.exit(1);
 }
+
+loadDotEnvFile({
+  parentDirPath: cwd,
+  envFileName: ENV_FILE_NAME.LOCAL,
+});
+loadDotEnvFile({
+  parentDirPath: cwd,
+  envFileName: ENV_FILE_NAME.DEFAULT,
+});
 
 switch (result.method) {
   case "help":
