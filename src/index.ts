@@ -39,6 +39,11 @@ switch (result.method) {
 
     switch (result.route) {
       case "/": {
+        if (result.model.staged && result.model.all) {
+          log.error("Conflicting options: staged, all");
+          process.exit(1);
+        }
+
         if (result.model.all) {
           await stageChanges();
         }
