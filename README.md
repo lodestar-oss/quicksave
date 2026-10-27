@@ -1,3 +1,3 @@
 # Quicksave CLI
 
-For people who's tired of comming up with commit messages.
+A CLI for people who's tired of comming up with commit messages.
