@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { cancel, confirm, isCancel, log, outro } from "@clack/prompts";
 
 import { commit } from "@/ops/commit";
