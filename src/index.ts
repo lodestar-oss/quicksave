@@ -18,15 +18,6 @@ if (!result.ok) {
   process.exit(1);
 }
 
-loadDotEnvFile({
-  parentDirPath: cwd,
-  envFileName: ENV_FILE_NAME.LOCAL,
-});
-loadDotEnvFile({
-  parentDirPath: cwd,
-  envFileName: ENV_FILE_NAME.DEFAULT,
-});
-
 switch (result.method) {
   case "help":
     console.log(printHelp(result));
@@ -37,6 +28,15 @@ switch (result.method) {
     break;
 
   case "execute":
+    loadDotEnvFile({
+      parentDirPath: cwd,
+      envFileName: ENV_FILE_NAME.LOCAL,
+    });
+    loadDotEnvFile({
+      parentDirPath: cwd,
+      envFileName: ENV_FILE_NAME.DEFAULT,
+    });
+
     switch (result.route) {
       case "/": {
         await stageChanges();
