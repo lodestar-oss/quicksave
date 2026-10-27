@@ -1,8 +1,9 @@
 import { x } from "tinyexec";
 
+import { cwd } from "@/config/cwd";
 import { LOCKFILE_TUPLE } from "@/constants";
 
-export async function getStagedDiff({ cwd = process.cwd() }: { cwd?: string }) {
+export async function getStagedDiff() {
   const result = await x(
     "git",
     [

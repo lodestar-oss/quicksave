@@ -4,9 +4,7 @@ import { commit } from "@/ops/commit";
 import { generateCommitMessage } from "@/ops/generate-commit-message";
 import { getStagedDiff } from "@/ops/get-staged-diff";
 
-const cwd = process.cwd();
-
-const diff = await getStagedDiff({ cwd });
+const diff = await getStagedDiff();
 
 if (diff.length === 0) {
   log.warn("No staged changes to commit.");
