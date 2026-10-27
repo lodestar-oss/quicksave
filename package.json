@@ -51,9 +51,6 @@
     "typescript": "7.1.0-beta",
     "vitest": "5.0.5"
   },
-  "peerDependencies": {
-    "type-fest": "^5.0.0"
-  },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
