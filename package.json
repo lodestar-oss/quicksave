@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@ai-sdk/groq": "4.0.70",
+    "@bomb.sh/router": "0.8.0",
     "@clack/prompts": "1.8.1",
     "@little-nebulae/error": "1.4.0",
     "@little-nebulae/node-env": "0.4.0",
