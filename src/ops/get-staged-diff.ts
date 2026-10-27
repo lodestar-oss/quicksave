@@ -13,8 +13,8 @@ export async function getStagedDiff() {
       "--no-ext-diff",
       "--find-renames",
       "--",
-      ".",
-      ...LOCKFILE_TUPLE.map((f) => `:(exclude)${f}`),
+      ":/",
+      ...LOCKFILE_TUPLE.map((f) => `:(exclude,glob)**/${f}`),
     ],
     { nodeOptions: { cwd }, throwOnError: true },
   );
