@@ -1,0 +1,14 @@
+# Dependency settings
+savePrefix: ""
+virtualStoreType: global
+allowBuilds:
+  esbuild: true
+
+# Supply chain attack mitigation
+minimumReleaseAge: 1440
+minimumReleaseAgeStrict: true
+minimumReleaseAgeExclude:
+  - "@little-nebulae/*"
+blockExoticSubdeps: true
+trustPolicy: no-downgrade
+trustPolicyIgnoreAfter: 1440

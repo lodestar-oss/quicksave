@@ -1,0 +1,53 @@
+{
+  "name": "quicksave",
+  "version": "0.1.0",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public",
+    "tag": "latest"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "fmt": "oxfmt --disable-nested-config",
+    "fmt:check": "oxfmt --check --disable-nested-config",
+    "lint": "oxlint --disable-nested-config",
+    "lint:fix": "oxlint --fix --disable-nested-config",
+    "check": "pnpm run lint && pnpm run fmt:check",
+    "fix": "pnpm run lint:fix && pnpm run fmt",
+    "test": "vitest run",
+    "try": "oxnode ./src/try.ts"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/core": "0.18.5",
+    "@oxc-node/cli": "1.0.1",
+    "@types/node": "26.6.5",
+    "oxfmt": "0.74.0",
+    "oxlint": "1.89.0",
+    "oxlint-tsgolint": "7.0.2005",
+    "publint": "0.3.25",
+    "tsdown": "0.23.2",
+    "type-fest": "5.10.0",
+    "typescript": "7.1.0-beta",
+    "vitest": "5.0.5"
+  },
+  "peerDependencies": {
+    "type-fest": "^5.0.0"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.15.0",
+      "onFail": "warn"
+    }
+  },
+  "packageManager": "pnpm@12.15.0"
+}
