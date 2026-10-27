@@ -39,7 +39,9 @@ switch (result.method) {
 
     switch (result.route) {
       case "/": {
-        await stageChanges();
+        if (result.model.all) {
+          await stageChanges();
+        }
 
         const diff = await getStagedDiff();
 
