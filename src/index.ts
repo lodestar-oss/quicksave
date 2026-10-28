@@ -68,7 +68,7 @@ switch (result.method) {
           if (hasUnstaged) {
             let willStage = true;
 
-            if (isTTY) {
+            if (isTTY && !all) {
               const shouldStage = await confirm({
                 message:
                   "You have unstaged changes. Do you want to add them all?",
