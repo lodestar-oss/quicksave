@@ -39,14 +39,14 @@ switch (result.method) {
 
     switch (result.route) {
       case "/": {
-        const { cwd } = result.model;
+        const { cwd, staged, all } = result.model;
 
-        if (result.model.staged && result.model.all) {
+        if (staged && all) {
           log.error("Conflicting options: staged, all");
           process.exit(1);
         }
 
-        if (result.model.all) {
+        if (all) {
           await stageAllChanges({ cwd });
         }
 
