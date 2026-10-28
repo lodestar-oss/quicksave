@@ -94,7 +94,7 @@ switch (result.method) {
             await restoreIndex({ cwd, treeId });
             log.info("Rolled back unstaged changes.");
           }
-          outro("Nothing was committed.");
+          outro("Exit early.");
           process.exit(0);
         }
 
