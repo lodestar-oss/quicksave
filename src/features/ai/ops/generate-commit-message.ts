@@ -1,10 +1,12 @@
 import { createGroq } from "@ai-sdk/groq";
 import { generateText } from "ai";
 
+import type { GitDiff } from "@/features/git/types";
+
 import { SYSTEM_PROMPT } from "@/config/ai/system-prompt";
 import { getEnvVars } from "@/ops/get-env-vars";
 
-export async function generateCommitMessage({ diff }: { diff: string }) {
+export async function generateCommitMessage({ diff }: { diff: GitDiff }) {
   const env = getEnvVars();
   const groqProvider = createGroq({ apiKey: env.GROQ_API_KEY });
 
