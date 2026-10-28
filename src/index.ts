@@ -5,7 +5,6 @@ import { cancel, confirm, isCancel, log, outro } from "@clack/prompts";
 import { ENV_FILE_NAME, loadDotEnvFile } from "@little-nebulae/node-env";
 
 import { app } from "@/app";
-import { cwd } from "@/config/cwd";
 import { stageAllChanges } from "@/features/git/ops/stage-all-changes";
 import { commitChanges } from "@/ops/commit-changes";
 import { generateCommitMessage } from "@/ops/generate-commit-message";
@@ -28,15 +27,6 @@ switch (result.method) {
     break;
 
   case "execute":
-    loadDotEnvFile({
-      parentDirPath: cwd,
-      envFileName: ENV_FILE_NAME.LOCAL,
-    });
-    loadDotEnvFile({
-      parentDirPath: cwd,
-      envFileName: ENV_FILE_NAME.DEFAULT,
-    });
-
     switch (result.route) {
       case "/": {
         const { cwd, staged, all } = result.model;
@@ -56,6 +46,15 @@ switch (result.method) {
           log.warn("No staged changes to commit.");
           process.exit(0);
         }
+
+        loadDotEnvFile({
+          parentDirPath: cwd,
+          envFileName: ENV_FILE_NAME.LOCAL,
+        });
+        loadDotEnvFile({
+          parentDirPath: cwd,
+          envFileName: ENV_FILE_NAME.DEFAULT,
+        });
 
         log.info("Generating commit message...");
         const message = await generateCommitMessage({ diff });
