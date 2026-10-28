@@ -92,7 +92,7 @@ switch (result.method) {
           log.warn("No staged changes to commit.");
           if (treeId) {
             await restoreIndex({ cwd, treeId });
-            log.info("Rolled back unstaged changes.");
+            log.info("Unstaged the changes quicksave added.");
           }
           outro("Exit early.");
           process.exit(0);
@@ -111,7 +111,7 @@ switch (result.method) {
           if (isCancel(shouldCommit)) {
             if (treeId) {
               await restoreIndex({ cwd, treeId });
-              log.info("Rolled back unstaged changes.");
+              log.info("Unstaged the changes quicksave added.");
             }
             cancel("Operation cancelled.");
             process.exit(0);
@@ -120,7 +120,7 @@ switch (result.method) {
           if (!shouldCommit) {
             if (treeId) {
               await restoreIndex({ cwd, treeId });
-              log.info("Rolled back unstaged changes.");
+              log.info("Unstaged the changes quicksave added.");
             }
             outro("Nothing was committed.");
             process.exit(0);
