@@ -10,7 +10,7 @@ import {
 import { NonEmptyStringSchema } from "@little-nebulae/zod-schemas";
 import { z } from "zod";
 
-import { VERSION } from "@/constants";
+import packageManifest from "../package.json" with { type: "json" };
 
 const SwitchOptionSchema = z.preprocess(
   (value) => (typeof value === "undefined" ? false : value),
@@ -20,7 +20,7 @@ const SwitchOptionSchema = z.preprocess(
 export const app = command(
   name("quicksave"),
   description("A conventional commit generator using LLM."),
-  version(VERSION),
+  version(packageManifest.version),
   option(
     name("cwd"),
     cli(["--cwd", "-C"]),
