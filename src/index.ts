@@ -10,7 +10,6 @@ import { stageAllChanges } from "@/features/git/ops/stage-all-changes";
 import { commitChanges } from "@/ops/commit-changes";
 import { generateCommitMessage } from "@/ops/generate-commit-message";
 import { getStagedDiff } from "@/ops/get-staged-diff";
-import { stageChanges } from "@/ops/stage-changes";
 
 const result = parse(app, { argv: process.argv.slice(2) });
 
