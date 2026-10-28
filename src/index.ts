@@ -5,10 +5,10 @@ import { cancel, confirm, isCancel, log, outro } from "@clack/prompts";
 import { ENV_FILE_NAME, loadDotEnvFile } from "@little-nebulae/node-env";
 
 import { app } from "@/app";
+import { generateCommitMessage } from "@/features/ai/ops/generate-commit-message";
 import { commitStagedChanges } from "@/features/git/ops/commit-staged-changes";
 import { getStagedDiff } from "@/features/git/ops/get-staged-diff";
 import { stageAllChanges } from "@/features/git/ops/stage-all-changes";
-import { generateCommitMessage } from "@/ops/generate-commit-message";
 
 const result = parse(app, { argv: process.argv.slice(2) });
 
