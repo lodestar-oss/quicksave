@@ -36,6 +36,13 @@ switch (result.method) {
           process.exit(1);
         }
 
+        if (!process.stdin.isTTY && !staged && !all) {
+          log.error(
+            "The staged or all flag is required in non-interactive terminals.",
+          );
+          process.exit(1);
+        }
+
         if (all) {
           await stageAllChanges({ cwd });
         }
