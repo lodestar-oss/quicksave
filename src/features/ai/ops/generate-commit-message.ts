@@ -3,8 +3,8 @@ import { generateText } from "ai";
 
 import type { GitDiff } from "@/features/git/types";
 
+import { getEnvVars } from "@/config/env";
 import { SYSTEM_PROMPT } from "@/features/ai/system-prompt";
-import { getEnvVars } from "@/ops/get-env-vars";
 
 export async function generateCommitMessage({ diff }: { diff: GitDiff }) {
   const env = getEnvVars();
