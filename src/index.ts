@@ -5,10 +5,10 @@ import { cancel, confirm, isCancel, log, outro } from "@clack/prompts";
 import { ENV_FILE_NAME, loadDotEnvFile } from "@little-nebulae/node-env";
 
 import { app } from "@/app";
+import { getStagedDiff } from "@/features/git/ops/get-staged-diff";
 import { stageAllChanges } from "@/features/git/ops/stage-all-changes";
 import { commitChanges } from "@/ops/commit-changes";
 import { generateCommitMessage } from "@/ops/generate-commit-message";
-import { getStagedDiff } from "@/ops/get-staged-diff";
 
 const result = parse(app, { argv: process.argv.slice(2) });
 
@@ -40,7 +40,7 @@ switch (result.method) {
           await stageAllChanges({ cwd });
         }
 
-        const diff = await getStagedDiff();
+        const diff = await getStagedDiff({ cwd });
 
         if (diff.length === 0) {
           log.warn("No staged changes to commit.");
