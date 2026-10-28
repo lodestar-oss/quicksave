@@ -2,28 +2,17 @@ import { x } from "tinyexec";
 
 import type { GitChange } from "@/features/git/types";
 
-type GetAllChangesResult =
-  | { isDirty: false }
-  | { isDirty: true; changes: GitChange[] };
-
-export async function getAllChanges({
-  cwd,
-}: {
-  cwd: string;
-}): Promise<GetAllChangesResult> {
+export async function getAllChanges({ cwd }: { cwd: string }) {
   const { stdout } = await x(
     "git",
     ["status", "--porcelain=v1", "-z", "--untracked-files=all"],
     { nodeOptions: { cwd }, throwOnError: true },
   );
-
-  if (stdout.trim().length === 0) {
-    return { isDirty: false };
-  }
-
-  const parts = stdout.split("\0").filter((part) => part.length > 0);
   const changes: GitChange[] = [];
-
+  if (stdout.trim().length === 0) {
+    return changes;
+  }
+  const parts = stdout.split("\0").filter((part) => part.length > 0);
   for (let i = 0; i < parts.length; i++) {
     const entry = parts[i]!;
     const x = entry[0]!;
@@ -35,6 +24,5 @@ export async function getAllChanges({
     }
     changes.push({ path, status: { staged: x, unstaged: y } });
   }
-
-  return { isDirty: true, changes };
+  return changes;
 }
