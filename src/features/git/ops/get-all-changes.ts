@@ -15,14 +15,14 @@ export async function getAllChanges({ cwd }: { cwd: string }) {
   const parts = stdout.split("\0").filter((part) => part.length > 0);
   for (let i = 0; i < parts.length; i++) {
     const entry = parts[i]!;
-    const x = entry[0]!;
-    const y = entry[1]!;
+    const staged = entry[0]!;
+    const unstaged = entry[1]!;
     const path = entry.slice(3);
     // renames and copies are followed by an extra entry holding the original path
-    if (x === "R" || x === "C") {
+    if (staged === "R" || staged === "C") {
       i++;
     }
-    changes.push({ path, status: { staged: x, unstaged: y } });
+    changes.push({ path, status: { staged, unstaged } });
   }
   return changes;
 }
