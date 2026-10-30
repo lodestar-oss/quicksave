@@ -66,7 +66,12 @@ switch (result.method) {
 
         let treeId: GitTreeId | undefined = undefined;
         if (!staged) {
-          const changes = await getAllChanges({ cwd });
+          const getAllChangesResult = await getAllChanges({ cwd });
+          if (!getAllChangesResult.success) {
+            log.error(getAllChangesResult.error.message);
+            process.exit(1);
+          }
+          const changes = getAllChangesResult.data;
           const hasUnstaged = changes.some(
             (change) => change.status.unstaged !== " ",
           );
