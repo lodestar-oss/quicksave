@@ -184,9 +184,6 @@ importers:
       '@little-nebulae/result':
         specifier: 1.4.0
         version: 1.4.0
-      '@little-nebulae/system-error':
-        specifier: 2.1.0
-        version: 2.1.0(@little-nebulae/error@1.4.0(type-fest@5.10.0))(type-fest@5.10.0)
       '@little-nebulae/zod-schemas':
         specifier: 0.2.0
         version: 0.2.0(type-fest@5.10.0)(zod@4.6.7)
