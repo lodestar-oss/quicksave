@@ -3,10 +3,12 @@
 import { parse, printErrors, printHelp, printVersion } from "@bomb.sh/router";
 import { cancel, confirm, isCancel, log, outro } from "@clack/prompts";
 import { nodeLoadEnvFileList } from "@little-nebulae/node-env";
+import { prettifyError } from "zod";
 
 import type { GitTreeId } from "@/features/git/types";
 
 import { app } from "@/app";
+import { EnvSchema } from "@/config/env";
 import { generateCommitMessage } from "@/features/ai/ops/generate-commit-message";
 import { commitStagedChanges } from "@/features/git/ops/commit-staged-changes";
 import { getAllChanges } from "@/features/git/ops/get-all-changes";
@@ -53,6 +55,14 @@ switch (result.method) {
           parentDirPath: cwd,
           envFileList: [".env.local", ".env"],
         });
+        const parseEnvResult = EnvSchema.safeParse(process.env);
+        if (!parseEnvResult.success) {
+          log.error("Invalid GROQ_API_KEY environment variable:");
+          log.message(prettifyError(parseEnvResult.error));
+          outro("Please fix the above issue to continue.");
+          process.exit(1);
+        }
+        const env = parseEnvResult.data;
 
         let treeId: GitTreeId | undefined = undefined;
         if (!staged) {
