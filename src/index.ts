@@ -92,8 +92,26 @@ switch (result.method) {
             }
 
             if (willStage) {
-              treeId = await snapshotIndex({ cwd });
-              await stageAllChanges({ cwd });
+              const snapshotIndexResult = await snapshotIndex({ cwd });
+              if (snapshotIndexResult.success) {
+                treeId = snapshotIndexResult.data;
+                await stageAllChanges({ cwd });
+              } else {
+                log.error(snapshotIndexResult.error.message);
+                log.warn(
+                  "quicksave won't be able to unstage the changes it adds due to the above error.",
+                );
+                const shouldStageAnyways = await confirm({
+                  message: "Do you still want it to add them anyways?",
+                });
+                if (isCancel(shouldStageAnyways)) {
+                  cancel("Operation cancelled.");
+                  process.exit(0);
+                }
+                if (shouldStageAnyways) {
+                  await stageAllChanges({ cwd });
+                }
+              }
             }
           }
         }
