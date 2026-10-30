@@ -2,7 +2,7 @@
 
 import { parse, printErrors, printHelp, printVersion } from "@bomb.sh/router";
 import { cancel, confirm, isCancel, log, outro } from "@clack/prompts";
-import { ENV_FILE_NAME, loadDotEnvFile } from "@little-nebulae/node-env";
+import { nodeLoadEnvFileList } from "@little-nebulae/node-env";
 
 import type { GitTreeId } from "@/features/git/types";
 
@@ -49,13 +49,9 @@ switch (result.method) {
           process.exit(1);
         }
 
-        loadDotEnvFile({
+        nodeLoadEnvFileList({
           parentDirPath: cwd,
-          envFileName: ENV_FILE_NAME.LOCAL,
-        });
-        loadDotEnvFile({
-          parentDirPath: cwd,
-          envFileName: ENV_FILE_NAME.DEFAULT,
+          envFileList: [".env.local", ".env"],
         });
 
         let treeId: GitTreeId | undefined = undefined;
