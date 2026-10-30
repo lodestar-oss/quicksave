@@ -116,7 +116,13 @@ switch (result.method) {
           }
         }
 
-        const diff = await getStagedDiff({ cwd });
+        const getStagedDiffResult = await getStagedDiff({ cwd });
+        if (!getStagedDiffResult.success) {
+          log.error(getStagedDiffResult.error.message);
+          outro("quicksave cannot continue without a diff.");
+          process.exit(1);
+        }
+        const diff = getStagedDiffResult.data;
         if (diff.length === 0) {
           log.warn("No staged changes to commit.");
           if (treeId) {
