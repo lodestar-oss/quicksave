@@ -1,3 +1,4 @@
+import { wrapZodResult } from "@little-nebulae/zod";
 import { NonEmptyStringSchema } from "@little-nebulae/zod-schemas";
 import { z } from "zod";
 
@@ -6,6 +7,6 @@ const EnvSchema = z.object({
 });
 
 export function getEnvVars() {
-  const env = EnvSchema.parse(process.env);
-  return env;
+  const parseResult = EnvSchema.safeParse(process.env);
+  return wrapZodResult(parseResult);
 }
