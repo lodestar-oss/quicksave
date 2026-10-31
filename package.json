@@ -30,7 +30,7 @@
     "@ai-sdk/groq": "4.0.72",
     "@bomb.sh/router": "0.8.0",
     "@clack/prompts": "1.8.1",
-    "@little-nebulae/error": "1.4.0",
+    "@little-nebulae/error": "1.4.1",
     "@little-nebulae/node-env": "0.5.0",
     "@little-nebulae/result": "1.4.0",
     "@little-nebulae/zod-schemas": "0.2.0",
