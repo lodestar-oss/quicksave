@@ -1,8 +1,4 @@
-import {
-  composeErrorMessage,
-  isError,
-  UnexpectedError,
-} from "@little-nebulae/error";
+import { composeErrorMessage, UnexpectedError } from "@little-nebulae/error";
 import { attemptAsync } from "@little-nebulae/result";
 import { x } from "tinyexec";
 
@@ -32,11 +28,9 @@ export async function getStagedDiff({ cwd }: { cwd: string }) {
     },
     catchFn: (error) =>
       new UnexpectedError({
-        message: isError(error)
-          ? error.message
-          : composeErrorMessage({
-              operation: "get staged diff",
-            }),
+        message: composeErrorMessage({
+          operation: "get staged diff",
+        }),
         cause: error,
         meta: null,
       }),

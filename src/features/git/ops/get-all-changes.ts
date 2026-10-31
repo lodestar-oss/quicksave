@@ -1,8 +1,4 @@
-import {
-  composeErrorMessage,
-  isError,
-  UnexpectedError,
-} from "@little-nebulae/error";
+import { composeErrorMessage, UnexpectedError } from "@little-nebulae/error";
 import { attemptAsync } from "@little-nebulae/result";
 import { x } from "tinyexec";
 
@@ -36,11 +32,9 @@ export async function getAllChanges({ cwd }: { cwd: string }) {
     },
     catchFn: (error) =>
       new UnexpectedError({
-        message: isError(error)
-          ? error.message
-          : composeErrorMessage({
-              operation: "get all changes made to the repo",
-            }),
+        message: composeErrorMessage({
+          operation: "get all changes made to the repo",
+        }),
         cause: error,
         meta: null,
       }),

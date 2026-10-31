@@ -1,8 +1,4 @@
-import {
-  composeErrorMessage,
-  isError,
-  UnexpectedError,
-} from "@little-nebulae/error";
+import { composeErrorMessage, UnexpectedError } from "@little-nebulae/error";
 import { attemptAsync } from "@little-nebulae/result";
 import { x } from "tinyexec";
 
@@ -16,11 +12,9 @@ export async function stageAllChanges({ cwd }: { cwd: string }) {
     },
     catchFn: (error) =>
       new UnexpectedError({
-        message: isError(error)
-          ? error.message
-          : composeErrorMessage({
-              operation: "snapshot the current state of the repo",
-            }),
+        message: composeErrorMessage({
+          operation: "add all unstaged changes",
+        }),
         cause: error,
         meta: null,
       }),

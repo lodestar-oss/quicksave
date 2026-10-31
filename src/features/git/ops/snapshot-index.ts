@@ -1,8 +1,4 @@
-import {
-  composeErrorMessage,
-  isError,
-  UnexpectedError,
-} from "@little-nebulae/error";
+import { composeErrorMessage, UnexpectedError } from "@little-nebulae/error";
 import { attemptAsync } from "@little-nebulae/result";
 import { x } from "tinyexec";
 
@@ -19,11 +15,9 @@ export async function snapshotIndex({ cwd }: { cwd: string }) {
     },
     catchFn: (error) =>
       new UnexpectedError({
-        message: isError(error)
-          ? error.message
-          : composeErrorMessage({
-              operation: "snapshot the current state of the repo",
-            }),
+        message: composeErrorMessage({
+          operation: "snapshot the current state of the repo",
+        }),
         cause: error,
         meta: null,
       }),
