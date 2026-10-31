@@ -175,6 +175,9 @@ importers:
       '@clack/prompts':
         specifier: 1.8.1
         version: 1.8.1
+      '@little-nebulae/clack':
+        specifier: 0.1.0
+        version: 0.1.0(@clack/prompts@1.8.1)(@little-nebulae/error@1.4.1(type-fest@5.10.0))(@little-nebulae/result@1.4.0)(type-fest@5.10.0)
       '@little-nebulae/error':
         specifier: 1.4.1
         version: 1.4.1(type-fest@5.10.0)
@@ -197,9 +200,6 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
     devDependencies:
-      '@little-nebulae/clack':
-        specifier: 0.1.0
-        version: 0.1.0(@clack/prompts@1.8.1)(@little-nebulae/error@1.4.1(type-fest@5.10.0))(@little-nebulae/result@1.4.0)(type-fest@5.10.0)
       '@oxc-node/cli':
         specifier: 1.0.1
         version: 1.0.1

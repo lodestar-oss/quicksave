@@ -30,6 +30,7 @@
     "@ai-sdk/groq": "4.0.72",
     "@bomb.sh/router": "0.8.0",
     "@clack/prompts": "1.8.1",
+    "@little-nebulae/clack": "0.1.0",
     "@little-nebulae/error": "1.4.1",
     "@little-nebulae/node-env": "0.5.0",
     "@little-nebulae/result": "1.4.0",
@@ -39,7 +40,6 @@
     "zod": "4.6.7"
   },
   "devDependencies": {
-    "@little-nebulae/clack": "0.1.0",
     "@oxc-node/cli": "1.0.1",
     "@types/node": "26.6.6",
     "oxfmt": "0.75.0",
