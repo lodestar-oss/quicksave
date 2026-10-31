@@ -197,6 +197,9 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
     devDependencies:
+      '@little-nebulae/clack':
+        specifier: 0.1.0
+        version: 0.1.0(@clack/prompts@1.8.1)(@little-nebulae/error@1.4.1(type-fest@5.10.0))(@little-nebulae/result@1.4.0)(type-fest@5.10.0)
       '@oxc-node/cli':
         specifier: 1.0.1
         version: 1.0.1
@@ -273,6 +276,14 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
+
+  '@little-nebulae/clack@0.1.0':
+    resolution: {integrity: sha512-sxbMVG0NSU7oaB4HyxP9P/E5o1jywUiDsKT2Oh3pZNmlnFBwVJ29H4+KiM6LqP1F9C0lUtt8vgAcQpf0BwBvsQ==}
+    peerDependencies:
+      '@clack/prompts': ^1.0.0
+      '@little-nebulae/error': ^1.0.0
+      '@little-nebulae/result': ^1.0.0
+      type-fest: ^5.0.0
 
   '@little-nebulae/error@1.4.1':
     resolution: {integrity: sha512-ngPlRofsIvSXwJ5HoZUwMP5dIQ3QV9MfwcB8IT20UoLD7E2VU2qBmIY9jSIyU5XOf/Kb/wUFdI0YzIxwPAycyg==}
@@ -1533,6 +1544,13 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.6.0
+
+  '@little-nebulae/clack@0.1.0(@clack/prompts@1.8.1)(@little-nebulae/error@1.4.1(type-fest@5.10.0))(@little-nebulae/result@1.4.0)(type-fest@5.10.0)':
+    dependencies:
+      '@clack/prompts': 1.8.1
+      '@little-nebulae/error': 1.4.1(type-fest@5.10.0)
+      '@little-nebulae/result': 1.4.0
+      type-fest: 5.10.0
 
   '@little-nebulae/error@1.4.1(type-fest@5.10.0)':
     dependencies:
