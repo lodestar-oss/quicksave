@@ -1,6 +1,5 @@
 import { cancel, confirm, isCancel, log } from "@clack/prompts";
 import { clackConfirm } from "@little-nebulae/clack";
-import { succeed } from "@little-nebulae/result";
 
 import type { GitTreeId } from "@/features/git/types";
 
@@ -29,18 +28,15 @@ export async function handleUnstagedChanges({
   if (hasUnstaged) {
     let willStage = true;
 
-    if (isTTY && !all) {
+    if (!all) {
       const confirmStageResult = await clackConfirm({
+        isTTY,
         message: "You have unstaged changes. Do you want to add them all?",
       });
       if (!confirmStageResult.success) {
         return confirmStageResult;
       }
-      const confirmStageData = confirmStageResult.data;
-      if (confirmStageData.isCancelled) {
-        return succeed(confirmStageData);
-      }
-      willStage = confirmStageData.value;
+      willStage = confirmStageResult.data;
     }
 
     if (willStage) {
