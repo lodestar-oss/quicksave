@@ -10,6 +10,8 @@ import {
 import { NonEmptyStringSchema } from "@little-nebulae/zod-schemas";
 import { z } from "zod";
 
+import { MODE_ENUM } from "@/constants";
+
 import packageManifest from "../package.json" with { type: "json" };
 
 const SwitchOptionSchema = z.preprocess(
@@ -27,12 +29,12 @@ export const app = command(
     schema(NonEmptyStringSchema.default(process.cwd())),
   ),
   option(
-    name("staged"),
+    name(MODE_ENUM.STAGED),
     cli(["--staged", "-s"], { switch: true }),
     schema(SwitchOptionSchema),
   ),
   option(
-    name("all"),
+    name(MODE_ENUM.ALL),
     cli(["--all", "-a"], { switch: true }),
     schema(SwitchOptionSchema),
   ),

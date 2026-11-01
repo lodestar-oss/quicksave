@@ -1,3 +1,8 @@
+export const MODE_ENUM = {
+  STAGED: "staged",
+  ALL: "all",
+} as const;
+
 export const LOCKFILE_TUPLE = [
   "package-lock.json",
   "pnpm-lock.yaml",
