@@ -1,6 +1,7 @@
 export const MODE_ENUM = {
   STAGED: "staged",
   ALL: "all",
+  ASK: "ask",
 } as const;
 
 export const LOCKFILE_TUPLE = [

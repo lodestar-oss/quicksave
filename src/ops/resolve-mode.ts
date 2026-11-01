@@ -46,5 +46,14 @@ export function resolveMode({
     );
   }
 
-  return succeed(staged ? MODE_ENUM.STAGED : MODE_ENUM.ALL);
+  if (staged) {
+    // staged: true; all: false; isTTY: boolean
+    return succeed("staged");
+  }
+  if (all) {
+    // staged: false; all: true; isTTY: boolean
+    return succeed("all");
+  }
+  // staged: false; all: false; isTTY: true
+  return succeed("ask");
 }
