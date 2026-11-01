@@ -1,6 +1,12 @@
-import { cancel, confirm, isCancel, log } from "@clack/prompts";
+import type {
+  ClackIsCancelledError,
+  ClackNonInteractiveError,
+} from "@little-nebulae/clack";
+import type { UnexpectedError } from "@little-nebulae/error";
+import type { AsyncResult } from "@little-nebulae/result";
+
 import { clackConfirm } from "@little-nebulae/clack";
-import { DEFAULT_FAILURE_REASON, isError } from "@little-nebulae/error";
+import { succeed } from "@little-nebulae/result";
 
 import type { GitTreeId } from "@/features/git/types";
 
@@ -16,7 +22,10 @@ export async function handleUnstagedChanges({
   cwd: string;
   all: boolean;
   isTTY: boolean;
-}) {
+}): AsyncResult<
+  GitTreeId | undefined,
+  ClackNonInteractiveError | ClackIsCancelledError | UnexpectedError
+> {
   let treeId: GitTreeId | undefined = undefined;
 
   const getAllChangesResult = await getAllChanges({ cwd });
@@ -42,33 +51,17 @@ export async function handleUnstagedChanges({
 
     if (willStage) {
       const snapshotIndexResult = await snapshotIndex({ cwd });
-      if (snapshotIndexResult.success) {
-        treeId = snapshotIndexResult.data;
-        await stageAllChanges({ cwd });
-      } else {
-        const snapshotError = snapshotIndexResult.error;
-        log.error(snapshotError.message);
-        log.message(
-          isError(snapshotError.cause)
-            ? snapshotError.cause.message
-            : DEFAULT_FAILURE_REASON,
-        );
-        log.warn(
-          "quicksave won't be able to unstage the changes it adds due to the above error.",
-        );
-        if (isTTY) {
-          const shouldStageAnyways = await confirm({
-            message: "Do you still want it to add them anyways?",
-          });
-          if (isCancel(shouldStageAnyways)) {
-            cancel("Operation cancelled.");
-            process.exit(0);
-          }
-          if (shouldStageAnyways) {
-            await stageAllChanges({ cwd });
-          }
-        }
+      if (!snapshotIndexResult.success) {
+        return snapshotIndexResult;
+      }
+      treeId = snapshotIndexResult.data;
+
+      const stageAllChangesResult = await stageAllChanges({ cwd });
+      if (!stageAllChangesResult.success) {
+        return stageAllChangesResult;
       }
     }
   }
+
+  return succeed(treeId);
 }
