@@ -1,3 +1,5 @@
+import { composeErrorMessage, UnexpectedError } from "@little-nebulae/error";
+import { attemptAsync } from "@little-nebulae/result";
 import { x } from "tinyexec";
 
 export async function commitStagedChanges({
@@ -7,8 +9,20 @@ export async function commitStagedChanges({
   cwd: string;
   message: string;
 }) {
-  await x("git", ["commit", "-m", message], {
-    throwOnError: true,
-    nodeOptions: { cwd },
+  return attemptAsync({
+    tryFn: async () => {
+      await x("git", ["commit", "-m", message], {
+        throwOnError: true,
+        nodeOptions: { cwd },
+      });
+    },
+    catchFn: (error) =>
+      new UnexpectedError({
+        message: composeErrorMessage({
+          operation: "commit staged changes",
+        }),
+        cause: error,
+        meta: null,
+      }),
   });
 }
