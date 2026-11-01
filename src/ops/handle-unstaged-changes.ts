@@ -23,11 +23,14 @@ export async function handleUnstagedChanges({
   all: boolean;
   isTTY: boolean;
 }): AsyncResult<
-  GitTreeId | undefined,
+  | { snapshotted: true; treeId: GitTreeId }
+  | { snapshotted: false; reason: "the repo has no unstaged changes" }
+  | {
+      snapshotted: false;
+      reason: "the user doesn't want to add all unstaged changes";
+    },
   ClackNonInteractiveError | ClackIsCancelledError | UnexpectedError
 > {
-  let treeId: GitTreeId | undefined = undefined;
-
   const getAllChangesResult = await getAllChanges({ cwd });
   if (!getAllChangesResult.success) {
     return getAllChangesResult;
@@ -35,33 +38,40 @@ export async function handleUnstagedChanges({
   const changes = getAllChangesResult.data;
   const hasUnstaged = changes.some((change) => change.status.unstaged !== " ");
 
-  if (hasUnstaged) {
-    let willStage = true;
+  if (!hasUnstaged) {
+    return succeed({
+      snapshotted: false,
+      reason: "the repo has no unstaged changes",
+    });
+  }
 
-    if (!all) {
-      const confirmStageResult = await clackConfirm({
-        isTTY,
-        message: "You have unstaged changes. Do you want to add them all?",
-      });
-      if (!confirmStageResult.success) {
-        return confirmStageResult;
-      }
-      willStage = confirmStageResult.data;
+  if (!all) {
+    const confirmStageResult = await clackConfirm({
+      isTTY,
+      message: "You have unstaged changes. Do you want to add them all?",
+    });
+    if (!confirmStageResult.success) {
+      return confirmStageResult;
     }
-
-    if (willStage) {
-      const snapshotIndexResult = await snapshotIndex({ cwd });
-      if (!snapshotIndexResult.success) {
-        return snapshotIndexResult;
-      }
-      treeId = snapshotIndexResult.data;
-
-      const stageAllChangesResult = await stageAllChanges({ cwd });
-      if (!stageAllChangesResult.success) {
-        return stageAllChangesResult;
-      }
+    const shouldStage = confirmStageResult.data;
+    if (!shouldStage) {
+      return succeed({
+        snapshotted: false,
+        reason: "the user doesn't want to add all unstaged changes",
+      });
     }
   }
 
-  return succeed(treeId);
+  const snapshotIndexResult = await snapshotIndex({ cwd });
+  if (!snapshotIndexResult.success) {
+    return snapshotIndexResult;
+  }
+  const treeId = snapshotIndexResult.data;
+
+  const stageAllChangesResult = await stageAllChanges({ cwd });
+  if (!stageAllChangesResult.success) {
+    return stageAllChangesResult;
+  }
+
+  return succeed({ snapshotted: true, treeId });
 }
