@@ -1,7 +1,4 @@
-import type {
-  ClackIsCancelledError,
-  ClackNonInteractiveError,
-} from "@little-nebulae/clack";
+import type { ClackIsCancelledError } from "@little-nebulae/clack";
 import type { UnexpectedError } from "@little-nebulae/error";
 import type { AsyncResult } from "@little-nebulae/result";
 
@@ -18,11 +15,9 @@ import { stageAllChanges } from "@/features/git/ops/stage-all-changes";
 export async function handleUnstagedChanges({
   cwd,
   mode,
-  isTTY,
 }: {
   cwd: string;
   mode: Mode;
-  isTTY: boolean;
 }): AsyncResult<
   | { snapshotted: true; treeId: GitTreeId }
   | { snapshotted: false; reason: "the repo has no unstaged changes" }
@@ -30,7 +25,7 @@ export async function handleUnstagedChanges({
       snapshotted: false;
       reason: "the user doesn't want to add all unstaged changes";
     },
-  ClackNonInteractiveError | ClackIsCancelledError | UnexpectedError
+  ClackIsCancelledError | UnexpectedError
 > {
   const getAllChangesResult = await getAllChanges({ cwd });
   if (!getAllChangesResult.success) {
@@ -48,8 +43,8 @@ export async function handleUnstagedChanges({
 
   if (mode === "ask") {
     const confirmStageResult = await clackConfirm({
-      isTTY,
       message: "You have unstaged changes. Do you want to add them all?",
+      isTTY: true,
     });
     if (!confirmStageResult.success) {
       return confirmStageResult;
