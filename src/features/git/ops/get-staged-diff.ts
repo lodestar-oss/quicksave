@@ -5,6 +5,7 @@ import { x } from "tinyexec";
 import type { GitDiff } from "@/features/git/types";
 
 import { LOCKFILE_TUPLE } from "@/constants";
+import { EmptyDiffError } from "@/errors/empty-diff";
 
 export async function getStagedDiff({ cwd }: { cwd: string }) {
   return attemptAsync({
@@ -24,15 +25,23 @@ export async function getStagedDiff({ cwd }: { cwd: string }) {
         { nodeOptions: { cwd }, throwOnError: true },
       );
 
-      return result.stdout.trim() as GitDiff;
+      const diff = result.stdout.trim() as GitDiff;
+      if (diff.length === 0) {
+        throw new EmptyDiffError();
+      }
+      return diff;
     },
-    catchFn: (error) =>
-      new UnexpectedError({
+    catchFn: (error) => {
+      if (error instanceof EmptyDiffError) {
+        return error;
+      }
+      return new UnexpectedError({
         message: composeErrorMessage({
           operation: "get staged diff",
         }),
         cause: error,
         meta: null,
-      }),
+      });
+    },
   });
 }
