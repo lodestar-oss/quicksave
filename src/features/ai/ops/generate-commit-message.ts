@@ -7,6 +7,7 @@ import type { Env } from "@/config/env";
 import type { AIGenerationMetadata } from "@/features/ai/types";
 import type { GitDiff } from "@/features/git/types";
 
+import { EmptyCommitMessageError } from "@/errors/empty-commit-message";
 import { SYSTEM_PROMPT } from "@/features/ai/system-prompt";
 
 export async function generateCommitMessage({
@@ -26,23 +27,31 @@ export async function generateCommitMessage({
         prompt: `<diff>\n${diff}\n</diff>`,
       });
 
-      return {
-        message: generation.text.trim(),
-        meta: {
-          finishReason: generation.finishReason,
-          usage: generation.usage,
-          warnings: generation.warnings,
-          finalStep: generation.finalStep,
-        } satisfies AIGenerationMetadata,
-      };
+      const message = generation.text.trim();
+      const meta = {
+        finishReason: generation.finishReason,
+        usage: generation.usage,
+        warnings: generation.warnings,
+        finalStep: generation.finalStep,
+      } satisfies AIGenerationMetadata;
+
+      if (message.length === 0) {
+        throw new EmptyCommitMessageError(meta);
+      }
+
+      return { message, meta };
     },
-    catchFn: (error) =>
-      new UnexpectedError({
+    catchFn: (error) => {
+      if (error instanceof EmptyCommitMessageError) {
+        return error;
+      }
+      return new UnexpectedError({
         message: composeErrorMessage({
           operation: "generate commit message",
         }),
         cause: error,
         meta: null,
-      }),
+      });
+    },
   });
 }
