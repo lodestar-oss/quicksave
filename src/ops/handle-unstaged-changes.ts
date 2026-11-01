@@ -1,5 +1,6 @@
 import { cancel, confirm, isCancel, log } from "@clack/prompts";
 import { clackConfirm } from "@little-nebulae/clack";
+import { DEFAULT_FAILURE_REASON, isError } from "@little-nebulae/error";
 
 import type { GitTreeId } from "@/features/git/types";
 
@@ -45,7 +46,13 @@ export async function handleUnstagedChanges({
         treeId = snapshotIndexResult.data;
         await stageAllChanges({ cwd });
       } else {
-        log.error(snapshotIndexResult.error.message);
+        const snapshotError = snapshotIndexResult.error;
+        log.error(snapshotError.message);
+        log.message(
+          isError(snapshotError.cause)
+            ? snapshotError.cause.message
+            : DEFAULT_FAILURE_REASON,
+        );
         log.warn(
           "quicksave won't be able to unstage the changes it adds due to the above error.",
         );
