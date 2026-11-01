@@ -9,6 +9,7 @@ import { clackConfirm } from "@little-nebulae/clack";
 import { succeed } from "@little-nebulae/result";
 
 import type { GitTreeId } from "@/features/git/types";
+import type { Mode } from "@/types";
 
 import { getAllChanges } from "@/features/git/ops/get-all-changes";
 import { snapshotIndex } from "@/features/git/ops/snapshot-index";
@@ -16,11 +17,11 @@ import { stageAllChanges } from "@/features/git/ops/stage-all-changes";
 
 export async function handleUnstagedChanges({
   cwd,
-  all,
+  mode,
   isTTY,
 }: {
   cwd: string;
-  all: boolean;
+  mode: Mode;
   isTTY: boolean;
 }): AsyncResult<
   | { snapshotted: true; treeId: GitTreeId }
@@ -45,7 +46,7 @@ export async function handleUnstagedChanges({
     });
   }
 
-  if (!all) {
+  if (mode === "ask") {
     const confirmStageResult = await clackConfirm({
       isTTY,
       message: "You have unstaged changes. Do you want to add them all?",
