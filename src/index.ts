@@ -153,7 +153,26 @@ switch (result.method) {
           }
           process.exit(1);
         }
-        outro("Changes committed.");
+        const { committed } = handleCommitResult.data;
+        if (!committed) {
+          // Attempt to rollback if there's a snapshot
+          if (snapshotStatus.snapshotted) {
+            const restoreIndexResult = await restoreIndex({
+              cwd,
+              treeId: snapshotStatus.treeId,
+            });
+            if (!restoreIndexResult.success) {
+              const restoreIndexError = restoreIndexResult.error;
+              log.error(restoreIndexError.message);
+              log.message(
+                isError(restoreIndexError.cause)
+                  ? restoreIndexError.cause.message
+                  : DEFAULT_FAILURE_REASON,
+              );
+            }
+          }
+        }
+        outro(committed ? "Changes committed." : "Nothing was commited.");
         process.exit(0);
       }
     }
