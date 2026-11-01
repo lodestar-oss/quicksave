@@ -83,6 +83,7 @@ switch (result.method) {
           log.warn(snapshotStatus.reason);
         }
 
+        log.info("Generating commit message...");
         const getCommitMessageResult = await getCommitMessage({ cwd, env });
         if (!getCommitMessageResult.success) {
           // Report error from getCommitMessage
@@ -113,7 +114,9 @@ switch (result.method) {
           }
           process.exit(1);
         }
+        log.success("Commit message generated:");
         const { message } = getCommitMessageResult.data;
+        log.message(message);
 
         const handleCommitResult = await handleCommit({ isTTY, cwd, message });
         if (!handleCommitResult.success) {
