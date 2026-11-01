@@ -1,3 +1,7 @@
+import { constants } from "node:os";
+
+export const CANCEL_EXIT_CODE = 128 + constants.signals.SIGINT;
+
 export const MODE_ENUM = {
   STAGED: "staged",
   ALL: "all",

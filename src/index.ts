@@ -1,21 +1,19 @@
 #!/usr/bin/env node
 
 import { parse, printErrors, printHelp, printVersion } from "@bomb.sh/router";
-import { cancel, confirm, isCancel, log, outro } from "@clack/prompts";
+import { cancel, log, outro } from "@clack/prompts";
+import { DEFAULT_FAILURE_REASON, isError } from "@little-nebulae/error";
 import { nodeLoadEnvFileList } from "@little-nebulae/node-env";
 import { prettifyError } from "zod";
 
-import type { GitTreeId } from "@/features/git/types";
-
 import { app } from "@/app";
 import { EnvSchema } from "@/config/env";
-import { generateCommitMessage } from "@/features/ai/ops/generate-commit-message";
-import { commitStagedChanges } from "@/features/git/ops/commit-staged-changes";
-import { getAllChanges } from "@/features/git/ops/get-all-changes";
-import { getStagedDiff } from "@/features/git/ops/get-staged-diff";
+import { CANCEL_EXIT_CODE } from "@/constants";
 import { restoreIndex } from "@/features/git/ops/restore-index";
-import { snapshotIndex } from "@/features/git/ops/snapshot-index";
-import { stageAllChanges } from "@/features/git/ops/stage-all-changes";
+import { getCommitMessage } from "@/ops/get-commit-message";
+import { handleCommit } from "@/ops/handle-commit";
+import { handleUnstagedChanges } from "@/ops/handle-unstaged-changes";
+import { resolveMode } from "@/ops/resolve-mode";
 
 const result = parse(app, { argv: process.argv.slice(2) });
 
@@ -39,17 +37,12 @@ switch (result.method) {
         const { cwd, staged, all } = result.model;
         const isTTY = process.stdin.isTTY;
 
-        if (staged && all) {
-          log.error("Conflicting options: staged, all");
+        const resolveModeResult = resolveMode({ staged, all, isTTY });
+        if (!resolveModeResult.success) {
+          log.error(resolveModeResult.error.message);
           process.exit(1);
         }
-
-        if (!isTTY && !staged && !all) {
-          log.error(
-            "The staged or all flag is required in non-interactive terminals.",
-          );
-          process.exit(1);
-        }
+        const mode = resolveModeResult.data;
 
         nodeLoadEnvFileList({
           parentDirPath: cwd,
@@ -64,107 +57,99 @@ switch (result.method) {
         }
         const env = parseEnvResult.data;
 
-        let treeId: GitTreeId | undefined = undefined;
-        if (!staged) {
-          const getAllChangesResult = await getAllChanges({ cwd });
-          if (!getAllChangesResult.success) {
-            log.error(getAllChangesResult.error.message);
-            process.exit(1);
+        const handleUnstagedChangesResult = await handleUnstagedChanges({
+          cwd,
+          mode,
+        });
+        if (!handleUnstagedChangesResult.success) {
+          const handleUnstagedChangesError = handleUnstagedChangesResult.error;
+          if (handleUnstagedChangesError.code === "CLACK_IS_CANCELLED_ERROR") {
+            cancel(handleUnstagedChangesError.message);
+            process.exit(CANCEL_EXIT_CODE);
           }
-          const changes = getAllChangesResult.data;
-          const hasUnstaged = changes.some(
-            (change) => change.status.unstaged !== " ",
+          log.error(handleUnstagedChangesError.message);
+          log.message(
+            isError(handleUnstagedChangesError.cause)
+              ? handleUnstagedChangesError.cause.message
+              : DEFAULT_FAILURE_REASON,
           );
-
-          if (hasUnstaged) {
-            let willStage = true;
-
-            if (isTTY && !all) {
-              const shouldStage = await confirm({
-                message:
-                  "You have unstaged changes. Do you want to add them all?",
-              });
-              if (isCancel(shouldStage)) {
-                cancel("Operation cancelled.");
-                process.exit(0);
-              }
-              willStage = shouldStage;
-            }
-
-            if (willStage) {
-              const snapshotIndexResult = await snapshotIndex({ cwd });
-              if (snapshotIndexResult.success) {
-                treeId = snapshotIndexResult.data;
-                await stageAllChanges({ cwd });
-              } else {
-                log.error(snapshotIndexResult.error.message);
-                log.warn(
-                  "quicksave won't be able to unstage the changes it adds due to the above error.",
-                );
-                if (isTTY) {
-                  const shouldStageAnyways = await confirm({
-                    message: "Do you still want it to add them anyways?",
-                  });
-                  if (isCancel(shouldStageAnyways)) {
-                    cancel("Operation cancelled.");
-                    process.exit(0);
-                  }
-                  if (shouldStageAnyways) {
-                    await stageAllChanges({ cwd });
-                  }
-                }
-              }
-            }
-          }
-        }
-
-        const getStagedDiffResult = await getStagedDiff({ cwd });
-        if (!getStagedDiffResult.success) {
-          log.error(getStagedDiffResult.error.message);
-          outro("quicksave cannot continue without a diff.");
           process.exit(1);
         }
-        const diff = getStagedDiffResult.data;
-        if (diff.length === 0) {
-          log.warn("No staged changes to commit.");
-          if (treeId) {
-            await restoreIndex({ cwd, treeId });
-            log.info("Unstaged the changes quicksave added.");
-          }
-          outro("Exit early.");
-          process.exit(0);
+        const snapshotStatus = handleUnstagedChangesResult.data;
+        if (
+          !snapshotStatus.snapshotted &&
+          snapshotStatus.reason === "the repo has no unstaged changes"
+        ) {
+          log.warn(snapshotStatus.reason);
         }
 
-        log.info("Generating commit message...");
-        const message = await generateCommitMessage({ diff });
-        log.success("Commit message generated:");
-        log.message(message);
-
-        if (isTTY) {
-          const shouldCommit = await confirm({
-            message: "Do you want to commit with the above message?",
-          });
-
-          if (isCancel(shouldCommit)) {
-            if (treeId) {
-              await restoreIndex({ cwd, treeId });
-              log.info("Unstaged the changes quicksave added.");
-            }
-            cancel("Operation cancelled.");
-            process.exit(0);
+        const getCommitMessageResult = await getCommitMessage({ cwd, env });
+        if (!getCommitMessageResult.success) {
+          // Report error from getCommitMessage
+          const getCommitMessageError = getCommitMessageResult.error;
+          log.error(getCommitMessageError.message);
+          if (getCommitMessageError.code === "UNEXPECTED_ERROR") {
+            log.message(
+              isError(getCommitMessageError.cause)
+                ? getCommitMessageError.cause.message
+                : DEFAULT_FAILURE_REASON,
+            );
           }
-
-          if (!shouldCommit) {
-            if (treeId) {
-              await restoreIndex({ cwd, treeId });
-              log.info("Unstaged the changes quicksave added.");
+          // Attempt to rollback if there's a snapshot
+          if (snapshotStatus.snapshotted) {
+            const restoreIndexResult = await restoreIndex({
+              cwd,
+              treeId: snapshotStatus.treeId,
+            });
+            if (!restoreIndexResult.success) {
+              const restoreIndexError = restoreIndexResult.error;
+              log.error(restoreIndexError.message);
+              log.message(
+                isError(restoreIndexError.cause)
+                  ? restoreIndexError.cause.message
+                  : DEFAULT_FAILURE_REASON,
+              );
             }
-            outro("Nothing was committed.");
-            process.exit(0);
           }
+          process.exit(1);
         }
+        const { message } = getCommitMessageResult.data;
 
-        await commitStagedChanges({ cwd, message });
+        const handleCommitResult = await handleCommit({ isTTY, cwd, message });
+        if (!handleCommitResult.success) {
+          // Report error from handleCommit
+          const handleCommitError = handleCommitResult.error;
+          if (handleCommitError.code === "CLACK_IS_CANCELLED_ERROR") {
+            cancel(handleCommitError.message);
+          } else {
+            log.error(handleCommitError.message);
+            log.message(
+              isError(handleCommitError.cause)
+                ? handleCommitError.cause.message
+                : DEFAULT_FAILURE_REASON,
+            );
+          }
+          // Attempt to rollback if there's a snapshot
+          if (snapshotStatus.snapshotted) {
+            const restoreIndexResult = await restoreIndex({
+              cwd,
+              treeId: snapshotStatus.treeId,
+            });
+            if (!restoreIndexResult.success) {
+              const restoreIndexError = restoreIndexResult.error;
+              log.error(restoreIndexError.message);
+              log.message(
+                isError(restoreIndexError.cause)
+                  ? restoreIndexError.cause.message
+                  : DEFAULT_FAILURE_REASON,
+              );
+            }
+          }
+          if (handleCommitError.code === "CLACK_IS_CANCELLED_ERROR") {
+            process.exit(CANCEL_EXIT_CODE);
+          }
+          process.exit(1);
+        }
         outro("Changes committed.");
         process.exit(0);
       }
