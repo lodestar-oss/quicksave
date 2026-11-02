@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { parse, printErrors, printHelp, printVersion } from "@bomb.sh/router";
-import { cancel, log, outro } from "@clack/prompts";
+import { cancel, intro, log, outro } from "@clack/prompts";
 import { DEFAULT_FAILURE_REASON, isError } from "@little-nebulae/error";
 import { nodeLoadEnvFileList } from "@little-nebulae/node-env";
 import { prettifyError } from "zod";
@@ -34,6 +34,7 @@ switch (result.method) {
   case "execute":
     switch (result.route) {
       case "/": {
+        intro("Initiating quicksave...");
         const { cwd, staged, all } = result.model;
         const isTTY = process.stdin.isTTY;
 
