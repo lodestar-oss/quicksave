@@ -18,7 +18,7 @@ import { resolveMode } from "@/ops/resolve-mode";
 const result = parse(app, { argv: process.argv.slice(2) });
 
 if (!result.ok) {
-  log.error(printErrors(result));
+  console.error(printErrors(result));
   process.exit(1);
 }
 
