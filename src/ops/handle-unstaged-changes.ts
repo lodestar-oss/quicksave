@@ -24,10 +24,10 @@ export async function handleUnstagedChanges({
       snapshotted: false;
       reason: "In staged mode, unstaged changes are ignored.";
     }
-  | { snapshotted: false; reason: "the repo has no unstaged changes" }
+  | { snapshotted: false; reason: "The repo has no unstaged changes" }
   | {
       snapshotted: false;
-      reason: "the user doesn't want to add all unstaged changes";
+      reason: "The user doesn't want to add all unstaged changes";
     },
   ClackIsCancelledError | UnexpectedError
 > {
@@ -48,7 +48,7 @@ export async function handleUnstagedChanges({
   if (!hasUnstaged) {
     return succeed({
       snapshotted: false,
-      reason: "the repo has no unstaged changes",
+      reason: "The repo has no unstaged changes",
     });
   }
 
@@ -64,7 +64,7 @@ export async function handleUnstagedChanges({
     if (!shouldStage) {
       return succeed({
         snapshotted: false,
-        reason: "the user doesn't want to add all unstaged changes",
+        reason: "The user doesn't want to add all unstaged changes",
       });
     }
   }
