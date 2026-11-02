@@ -8,7 +8,7 @@ import { prettifyError } from "zod";
 
 import { app } from "@/app";
 import { EnvSchema } from "@/config/env";
-import { CANCEL_EXIT_CODE } from "@/constants";
+import { CANCEL_EXIT_CODE, OPERATION_FAILED_OUTRO } from "@/constants";
 import { restoreIndex } from "@/features/git/ops/restore-index";
 import { getCommitMessage } from "@/ops/get-commit-message";
 import { handleCommit } from "@/ops/handle-commit";
@@ -41,6 +41,7 @@ switch (result.method) {
         const resolveModeResult = resolveMode({ staged, all, isTTY });
         if (!resolveModeResult.success) {
           log.error(resolveModeResult.error.message);
+          outro(OPERATION_FAILED_OUTRO);
           process.exit(1);
         }
         const mode = resolveModeResult.data;
@@ -74,6 +75,7 @@ switch (result.method) {
               ? handleUnstagedChangesError.cause.message
               : DEFAULT_FAILURE_REASON,
           );
+          outro(OPERATION_FAILED_OUTRO);
           process.exit(1);
         }
         const snapshotStatus = handleUnstagedChangesResult.data;
@@ -113,6 +115,8 @@ switch (result.method) {
               );
             }
           }
+          // Exist
+          outro(OPERATION_FAILED_OUTRO);
           process.exit(1);
         }
         log.success("Commit message generated:");
@@ -149,9 +153,11 @@ switch (result.method) {
               );
             }
           }
+          // Exit
           if (handleCommitError.code === "CLACK_IS_CANCELLED_ERROR") {
             process.exit(CANCEL_EXIT_CODE);
           }
+          outro(OPERATION_FAILED_OUTRO);
           process.exit(1);
         }
         const { committed } = handleCommitResult.data;
