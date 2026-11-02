@@ -20,6 +20,10 @@ export async function handleUnstagedChanges({
   mode: Mode;
 }): AsyncResult<
   | { snapshotted: true; treeId: GitTreeId }
+  | {
+      snapshotted: false;
+      reason: "In staged mode, unstaged changes are ignored.";
+    }
   | { snapshotted: false; reason: "the repo has no unstaged changes" }
   | {
       snapshotted: false;
@@ -27,6 +31,13 @@ export async function handleUnstagedChanges({
     },
   ClackIsCancelledError | UnexpectedError
 > {
+  if (mode === "staged") {
+    return succeed({
+      snapshotted: false,
+      reason: "In staged mode, unstaged changes are ignored.",
+    });
+  }
+
   const getAllChangesResult = await getAllChanges({ cwd });
   if (!getAllChangesResult.success) {
     return getAllChangesResult;
