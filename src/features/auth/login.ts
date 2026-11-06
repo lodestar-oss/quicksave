@@ -7,10 +7,10 @@ import {
   clackPassword,
   clackSelect,
 } from "@little-nebulae/clack";
-import { createKeyringEntry } from "@little-nebulae/keyring";
 import { succeed } from "@little-nebulae/result";
 
 import { KEYRING_ENUM } from "@/constants";
+import { createAPIKeyEntry } from "@/features/auth/utils/create-api-key-entry";
 import { getAPIKey } from "@/ops/get-api-key";
 
 export async function login({
@@ -58,10 +58,7 @@ export async function login({
   }
   const password = promptPasswordResult.data;
 
-  const createEntryResult = createKeyringEntry({
-    service: KEYRING_ENUM.SERVICE,
-    username: provider,
-  });
+  const createEntryResult = createAPIKeyEntry({ provider });
   if (!createEntryResult.success) {
     return createEntryResult;
   }
