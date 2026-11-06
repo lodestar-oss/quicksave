@@ -11,7 +11,7 @@ import {
 import { NonEmptyStringSchema } from "@little-nebulae/zod-schemas";
 import { z } from "zod";
 
-import { MODE_ENUM } from "@/constants";
+import { KEYRING_ENUM, MODE_ENUM } from "@/constants";
 
 import packageManifest from "../package.json" with { type: "json" };
 
@@ -38,6 +38,10 @@ export const app = command(
     name(MODE_ENUM.ALL),
     cli(["--all", "-a"], { switch: true }),
     schema(SwitchOptionSchema),
+  ),
+  option(
+    name("provider"),
+    schema(z.enum(KEYRING_ENUM.PROVIDER).default("groq")),
   ),
   route(
     name("auth"),

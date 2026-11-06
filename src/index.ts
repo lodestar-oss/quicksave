@@ -3,11 +3,8 @@
 import { parse, printErrors, printHelp, printVersion } from "@bomb.sh/router";
 import { cancel, intro, log, outro } from "@clack/prompts";
 import { DEFAULT_FAILURE_REASON, isError } from "@little-nebulae/error";
-import { nodeLoadEnvFileList } from "@little-nebulae/node-env";
-import { prettifyError } from "zod";
 
 import { app } from "@/app";
-import { EnvSchema } from "@/config/env";
 import {
   CANCEL_EXIT_CODE,
   KEYRING_ENUM,
@@ -43,7 +40,7 @@ switch (result.method) {
     switch (result.route) {
       case "/": {
         intro("Initiating quicksave...");
-        const { cwd, staged, all } = result.model;
+        const { cwd, staged, all, provider } = result.model;
 
         const resolveModeResult = resolveMode({ staged, all, isTTY });
         if (!resolveModeResult.success) {
@@ -53,18 +50,24 @@ switch (result.method) {
         }
         const mode = resolveModeResult.data;
 
-        nodeLoadEnvFileList({
-          parentDirPath: cwd,
-          envFileList: [".env.local", ".env"],
-        });
-        const parseEnvResult = EnvSchema.safeParse(process.env);
-        if (!parseEnvResult.success) {
-          log.error("Invalid GROQ_API_KEY environment variable:");
-          log.message(prettifyError(parseEnvResult.error));
-          outro("Please fix the above issue to continue.");
+        const getAPIKeyResult = getAPIKey({ provider });
+        if (!getAPIKeyResult.success) {
+          const getAPIKeyError = getAPIKeyResult.error;
+          if (getAPIKeyError.code === "KEYRING_NO_ENTRY_ERROR") {
+            log.error(`No API key for ${provider} provider was set.`);
+            log.info("Please add one with the auth login command.");
+          } else {
+            log.error(getAPIKeyError.message);
+            log.message(
+              isError(getAPIKeyError.cause)
+                ? getAPIKeyError.cause.message
+                : DEFAULT_FAILURE_REASON,
+            );
+          }
+          outro(OPERATION_FAILED_OUTRO);
           process.exit(1);
         }
-        const env = parseEnvResult.data;
+        const apiKey = getAPIKeyResult.data;
 
         const handleUnstagedChangesResult = await handleUnstagedChanges({
           cwd,
@@ -94,7 +97,7 @@ switch (result.method) {
         }
 
         log.info("Generating commit message...");
-        const getCommitMessageResult = await getCommitMessage({ cwd, env });
+        const getCommitMessageResult = await getCommitMessage({ cwd, apiKey });
         if (!getCommitMessageResult.success) {
           // Report error from getCommitMessage
           const getCommitMessageError = getCommitMessageResult.error;
