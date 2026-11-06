@@ -8,8 +8,13 @@ import { prettifyError } from "zod";
 
 import { app } from "@/app";
 import { EnvSchema } from "@/config/env";
-import { CANCEL_EXIT_CODE, OPERATION_FAILED_OUTRO } from "@/constants";
+import {
+  CANCEL_EXIT_CODE,
+  KEYRING_ENUM,
+  OPERATION_FAILED_OUTRO,
+} from "@/constants";
 import { login } from "@/features/auth/ops/login";
+import { getAPIKey } from "@/features/auth/utils/get-api-key";
 import { restoreIndex } from "@/features/git/ops/restore-index";
 import { getCommitMessage } from "@/ops/get-commit-message";
 import { handleCommit } from "@/ops/handle-commit";
@@ -225,6 +230,24 @@ switch (result.method) {
             : DEFAULT_FAILURE_REASON,
         );
         process.exit(1);
+      }
+      case "/auth/status": {
+        let message = "";
+        for (const provider of Object.values(KEYRING_ENUM.PROVIDER)) {
+          const getKeyResult = getAPIKey({ provider });
+          if (getKeyResult.success) {
+            message += `${provider}: authenticated.\n`;
+            continue;
+          }
+          if (getKeyResult.error.code === "KEYRING_NO_ENTRY_ERROR") {
+            message += `${provider}: not authenticated.\n`;
+            continue;
+          }
+          message += `${provider}: failed to check.\n`;
+        }
+        log.message(message);
+        outro("Operation complete.");
+        process.exit(0);
       }
     }
 }
