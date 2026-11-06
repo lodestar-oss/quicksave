@@ -9,6 +9,7 @@ import { prettifyError } from "zod";
 import { app } from "@/app";
 import { EnvSchema } from "@/config/env";
 import { CANCEL_EXIT_CODE, OPERATION_FAILED_OUTRO } from "@/constants";
+import { login } from "@/features/auth/ops/login";
 import { restoreIndex } from "@/features/git/ops/restore-index";
 import { getCommitMessage } from "@/ops/get-commit-message";
 import { handleCommit } from "@/ops/handle-commit";
@@ -32,11 +33,11 @@ switch (result.method) {
     break;
 
   case "execute":
+    const isTTY = process.stdin.isTTY;
     switch (result.route) {
       case "/": {
         intro("Initiating quicksave...");
         const { cwd, staged, all } = result.model;
-        const isTTY = process.stdin.isTTY;
 
         const resolveModeResult = resolveMode({ staged, all, isTTY });
         if (!resolveModeResult.success) {
@@ -181,6 +182,49 @@ switch (result.method) {
         }
         outro(committed ? "Changes committed." : "Nothing was commited.");
         process.exit(0);
+      }
+      case "/auth/login": {
+        if (!isTTY) {
+          log.error(
+            "The auth login command can only be executed in an interactive terminal context.",
+          );
+          process.exit(1);
+        }
+
+        const loginResult = await login({ isTTY });
+
+        // Success cases
+        if (loginResult.success) {
+          const successResult = loginResult.data;
+          // Did set case
+          if (successResult.didSet) {
+            outro(
+              successResult.overwritten
+                ? "The old API key has been replaced with a new one."
+                : "The API key has been set.",
+            );
+            // Did not set case
+          } else {
+            outro("Nothing was set. Your existing API key will be used.");
+          }
+          process.exit(0);
+        }
+
+        // Failure cases
+        const loginError = loginResult.error;
+        // Cancelled case
+        if (loginError.code === "CLACK_IS_CANCELLED_ERROR") {
+          cancel(loginError.message);
+          process.exit(CANCEL_EXIT_CODE);
+        }
+        // Unexpected case
+        log.error(loginError.message);
+        log.message(
+          isError(loginError.cause)
+            ? loginError.cause.message
+            : DEFAULT_FAILURE_REASON,
+        );
+        process.exit(1);
       }
     }
 }
