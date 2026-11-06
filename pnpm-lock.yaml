@@ -181,6 +181,9 @@ importers:
       '@little-nebulae/error':
         specifier: 1.4.1
         version: 1.4.1(type-fest@5.10.0)
+      '@little-nebulae/keyring':
+        specifier: 0.1.0
+        version: 0.1.0(@little-nebulae/error@1.4.1(type-fest@5.10.0))(@little-nebulae/result@1.4.0)(@types/node@26.6.6)
       '@little-nebulae/node-env':
         specifier: 0.5.0
         version: 0.5.0(@little-nebulae/error@1.4.1(type-fest@5.10.0))(@little-nebulae/node-errors@0.1.0(@little-nebulae/error@1.4.1(type-fest@5.10.0))(@types/node@26.6.6)(type-fest@5.10.0))(@little-nebulae/result@1.4.0)(@types/node@26.6.6)(type-fest@5.10.0)(zod@4.6.7)
@@ -190,9 +193,6 @@ importers:
       '@little-nebulae/zod-schemas':
         specifier: 0.2.0
         version: 0.2.0(type-fest@5.10.0)(zod@4.6.7)
-      '@napi-rs/keyring':
-        specifier: 2.1.2
-        version: 2.1.2
       ai:
         specifier: 7.0.156
         version: 7.0.156(zod@4.6.7)
@@ -292,6 +292,13 @@ packages:
     resolution: {integrity: sha512-ngPlRofsIvSXwJ5HoZUwMP5dIQ3QV9MfwcB8IT20UoLD7E2VU2qBmIY9jSIyU5XOf/Kb/wUFdI0YzIxwPAycyg==}
     peerDependencies:
       type-fest: ^5.0.0
+
+  '@little-nebulae/keyring@0.1.0':
+    resolution: {integrity: sha512-4FHd05WEx1bXczmVZ/25WUswhGVRiK3iBdeXCsBNW3SB+YzSi3znxKYEKBT2PidcJ1U6YRwyK/bQ724U47sepg==}
+    peerDependencies:
+      '@little-nebulae/error': ^1.0.0
+      '@little-nebulae/result': ^1.0.0
+      '@types/node': ^26.0.0
 
   '@little-nebulae/node-env@0.5.0':
     resolution: {integrity: sha512-12OQ+UQvOWjUA1y0uIPjQc09TwaFYTt2swau5c3rmFArRXziVc/f4BKu0QCn0O3otwdNG3399URM13pzQGVixQ==}
@@ -1639,6 +1646,13 @@ snapshots:
   '@little-nebulae/error@1.4.1(type-fest@5.10.0)':
     dependencies:
       type-fest: 5.10.0
+
+  '@little-nebulae/keyring@0.1.0(@little-nebulae/error@1.4.1(type-fest@5.10.0))(@little-nebulae/result@1.4.0)(@types/node@26.6.6)':
+    dependencies:
+      '@little-nebulae/error': 1.4.1(type-fest@5.10.0)
+      '@little-nebulae/result': 1.4.0
+      '@napi-rs/keyring': 2.1.2
+      '@types/node': 26.6.6
 
   '@little-nebulae/node-env@0.5.0(@little-nebulae/error@1.4.1(type-fest@5.10.0))(@little-nebulae/node-errors@0.1.0(@little-nebulae/error@1.4.1(type-fest@5.10.0))(@types/node@26.6.6)(type-fest@5.10.0))(@little-nebulae/result@1.4.0)(@types/node@26.6.6)(type-fest@5.10.0)(zod@4.6.7)':
     dependencies:
