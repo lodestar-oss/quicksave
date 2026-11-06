@@ -91,7 +91,8 @@ switch (result.method) {
         const snapshotStatus = handleUnstagedChangesResult.data;
         if (
           !snapshotStatus.snapshotted &&
-          snapshotStatus.reason === "The repo has no unstaged changes"
+          snapshotStatus.reason === "The repo has no unstaged changes" &&
+          mode === "all"
         ) {
           log.warn(snapshotStatus.reason);
         }
