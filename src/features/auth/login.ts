@@ -11,7 +11,7 @@ import { succeed } from "@little-nebulae/result";
 
 import { KEYRING_ENUM } from "@/constants";
 import { createAPIKeyEntry } from "@/features/auth/utils/create-api-key-entry";
-import { getAPIKey } from "@/ops/get-api-key";
+import { getAPIKey } from "@/features/auth/utils/get-api-key";
 
 export async function login({
   isTTY,
