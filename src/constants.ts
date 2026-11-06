@@ -4,6 +4,13 @@ export const CANCEL_EXIT_CODE = 128 + constants.signals.SIGINT;
 
 export const OPERATION_FAILED_OUTRO = "Operation failed.";
 
+export const KEYRING_ENUM = {
+  SERVICE: "lodestar.quicksave",
+  PROVIDER: {
+    GROQ: "groq",
+  },
+} as const;
+
 export const MODE_ENUM = {
   STAGED: "staged",
   ALL: "all",
