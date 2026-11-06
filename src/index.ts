@@ -14,6 +14,7 @@ import {
   OPERATION_FAILED_OUTRO,
 } from "@/constants";
 import { login } from "@/features/auth/ops/login";
+import { logout } from "@/features/auth/ops/logout";
 import { getAPIKey } from "@/features/auth/utils/get-api-key";
 import { restoreIndex } from "@/features/git/ops/restore-index";
 import { getCommitMessage } from "@/ops/get-commit-message";
@@ -248,6 +249,39 @@ switch (result.method) {
         log.message(message);
         outro("Operation complete.");
         process.exit(0);
+      }
+      case "/auth/logout": {
+        if (!isTTY) {
+          log.error(
+            "The auth logout command can only be executed in an interactive terminal context.",
+          );
+          process.exit(1);
+        }
+
+        const logoutResult = await logout({ isTTY });
+
+        if (logoutResult.success) {
+          outro("API key deleted.");
+          process.exit(0);
+        }
+
+        const logoutError = logoutResult.error;
+        if (logoutError.code === "CLACK_IS_CANCELLED_ERROR") {
+          cancel(logoutError.message);
+          process.exit(CANCEL_EXIT_CODE);
+        }
+        if (logoutError.code === "KEYRING_NO_ENTRY_ERROR") {
+          log.warn("No API key was set for the provider.");
+          outro("Nothing to delete.");
+          process.exit(0);
+        }
+        log.error(logoutError.message);
+        log.message(
+          isError(logoutError.cause)
+            ? logoutError.cause.message
+            : DEFAULT_FAILURE_REASON,
+        );
+        process.exit(1);
       }
     }
 }
