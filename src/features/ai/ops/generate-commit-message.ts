@@ -12,14 +12,14 @@ import { SYSTEM_PROMPT } from "@/features/ai/system-prompt";
 
 export async function generateCommitMessage({
   diff,
-  env,
+  apiKey,
 }: {
   diff: GitDiff;
-  env: Env;
+  apiKey: string;
 }) {
   return attemptAsync({
     tryFn: async () => {
-      const groqProvider = createGroq({ apiKey: env.GROQ_API_KEY });
+      const groqProvider = createGroq({ apiKey });
 
       const generation = await generateText({
         model: groqProvider("openai/gpt-oss-20b"),
