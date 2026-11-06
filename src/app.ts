@@ -4,6 +4,7 @@ import {
   description,
   name,
   option,
+  route,
   schema,
   version,
 } from "@bomb.sh/router";
@@ -37,5 +38,11 @@ export const app = command(
     name(MODE_ENUM.ALL),
     cli(["--all", "-a"], { switch: true }),
     schema(SwitchOptionSchema),
+  ),
+  route(
+    name("auth"),
+    command(name("login")),
+    command(name("status")),
+    command(name("logout")),
   ),
 );
