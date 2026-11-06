@@ -197,6 +197,7 @@ switch (result.method) {
           log.error(
             "The auth login command can only be executed in an interactive terminal context.",
           );
+          outro(OPERATION_FAILED_OUTRO);
           process.exit(1);
         }
 
@@ -233,6 +234,7 @@ switch (result.method) {
             ? loginError.cause.message
             : DEFAULT_FAILURE_REASON,
         );
+        outro(OPERATION_FAILED_OUTRO);
         process.exit(1);
       }
       case "/auth/status": {
@@ -258,6 +260,7 @@ switch (result.method) {
           log.error(
             "The auth logout command can only be executed in an interactive terminal context.",
           );
+          outro(OPERATION_FAILED_OUTRO);
           process.exit(1);
         }
 
@@ -284,6 +287,7 @@ switch (result.method) {
             ? logoutError.cause.message
             : DEFAULT_FAILURE_REASON,
         );
+        outro(OPERATION_FAILED_OUTRO);
         process.exit(1);
       }
     }
