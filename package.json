@@ -33,7 +33,6 @@
     "@little-nebulae/clack": "0.4.0",
     "@little-nebulae/error": "1.4.1",
     "@little-nebulae/keyring": "0.1.0",
-    "@little-nebulae/node-env": "0.5.0",
     "@little-nebulae/result": "1.4.0",
     "@little-nebulae/zod-schemas": "0.2.0",
     "ai": "7.0.163",
