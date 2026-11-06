@@ -3,7 +3,6 @@ import { composeErrorMessage, UnexpectedError } from "@little-nebulae/error";
 import { attemptAsync } from "@little-nebulae/result";
 import { generateText } from "ai";
 
-import type { Env } from "@/config/env";
 import type { AIGenerationMetadata } from "@/features/ai/types";
 import type { GitDiff } from "@/features/git/types";
 
